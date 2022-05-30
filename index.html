@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+  </head>
+   <style>
+    #navbar{
+      display: flex;
+      justify-content: space-between;
+
+    }
+    #menu {
+      display: grid;
+      
+    }
+    #menu {
+      display: grid;
+      grid-template-columns: repeat(4,1fr);
+    }
+    img {
+      width: 45%;
+    }
+   </style>
+  <body>
+    <div id="navbar">
+      <div>Login</div>
+      <div>SugnUp</div>
+      <div>Product</div>
+     <a id="add_to_bucket" href="bucket.html">Bucket</a>
+     <div id="coffee_count">0</div>
+      <!--Add navbar divs here-->
+      <!-- Link to bucket.html -->
+      <div id="">
+        <!--Show total number of coffee added to bucket here, do not add anything only Total count. Not even "Count - 5" but like this "5" -->
+      </div>
+    </div>
+   
+    <div id="menu">
+      <!--Show coffee list here in grid format-->
+      <!-- add an add to bucket button to each item, give it HTML id as 'add_to_bucket' -->
+    </div>
+  </body>
+</html>
+<script>
+
+async function getData(){
+    const url = `https://masai-mock-api.herokuapp.com/coffee/menu`;
+
+    try {
+       let res = await fetch(url);
+       let data = await res.json();
+       console.log(data);
+       return data.menu.data;
+    } catch (err) {
+        console.log("err:", error);
+    }
+
+}
+
+
+function append(data){
+    let container = document.getElementById("menu");
+    container.innerHTML = null;
+
+    data.forEach(function(el){
+        let div = document.createElement("div");
+
+        let image = document.createElement("img");
+        image.src = el.image;
+
+        let type = document.createElement("h1");
+        type.innerText = el.title;
+
+        let price = document.createElement("p");
+        price.innerText = el.price;
+
+        let button = document.createElement("button");
+        button.innerText = "Add to Bucket";
+        button.id = "add_to_bucket";
+        button.addEventListener("click", function(){
+            sendData(el);
+        })
+
+
+        div.append(image, type, price, button);
+        container.append(div);
+    })
+
+
+}
+
+function Data(i, t, p){
+    this.image = i,
+    this.type = t,
+    this. price = p
+}
+
+function sendData(data){
+    let dataArr = JSON.parse(localStorage.getItem("coffee")) || [];
+
+    let image = data.image;
+    let type = data.title;
+    let price = data.price;
+
+    let dataObj = new Data(image, type, price);
+    
+    dataArr.push(dataObj);
+    localStorage.setItem("coffee", JSON.stringify(dataArr));
+    dataCount();
+}
+
+function dataCount(){
+   let dataArr = JSON.parse(localStorage.getItem("coffee")) || [];
+   
+   let count = document.getElementById("coffee_count");
+   count.innerHTML = null;
+   let p = document.createElement("p");
+   p.innerText = dataArr.length;
+   count.append(p);
+
+}
+dataCount();
+
+
+
+
+
+ async function main(){
+     let data = await getData();
+     append(data);
+ }
+
+ main();
+
+
+</script>
